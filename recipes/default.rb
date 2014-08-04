@@ -21,6 +21,7 @@ if platform_family?("rhel")
   include_recipe "whats-fresh::_centos"
 end
 
+include_recipe 'git'
 include_recipe 'python'
 include_recipe "database::postgresql"
 
@@ -28,7 +29,7 @@ node['whats_fresh']['package_list'].each do |pkg|
   package pkg do
     action :install
   end
-end   
+end
 
 include_recipe 'postgis'
 
@@ -39,7 +40,7 @@ python_virtualenv venv_dir do
   owner "vagrant"
   group "vagrant"
   action :create
-end 
+end
 
 magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
