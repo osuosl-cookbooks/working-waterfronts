@@ -26,9 +26,7 @@ include_recipe 'python'
 include_recipe "database::postgresql"
 
 node['whats_fresh']['package_list'].each do |pkg|
-  package pkg do
-    action :install
-  end
+  package pkg
 end
 
 include_recipe 'postgis'
@@ -46,11 +44,13 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
+pg = Chef::EncryptedDataBag.item('whats_fresh', 'pgsql')
+
 postgresql_connection_info = {
-  :host     => '127.0.0.1',
-  :port     => node['postgresql']['config']['port'],
-  :username => 'postgres',
-  :password => node['postgresql']['password']['postgres']
+  :host     => pg['host'],
+  :port     => pg['port'],
+  :username => pg['user'],
+  :password => pg['pass']
 }
 
 # Create Postgres database

@@ -4,6 +4,15 @@ driver:
 
 provisioner:
   name: chef_solo
+  attributes:
+    postgresql:
+      version: 9.3
+      password:
+        postgres: postgres
+      server:
+        service_name: postgresql-9.3
+      config:
+        port: 5432
 
 platforms:
   - name: centos-6.5

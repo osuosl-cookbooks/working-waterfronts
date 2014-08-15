@@ -9,7 +9,3 @@ else
 end
 
 default['postgis']['package'] = 'postgis2_93'
-default['postgresql']['version'] = "9.3"
-default['postgresql']['password']['postgres'] = "postgres"
-default['postgresql']['server']['service_name'] = "postgresql-9.3"
-default['postgresql']['config']['port'] = "5432"
