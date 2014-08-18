@@ -1,7 +1,27 @@
 {
   "id": "pgsql",
-  "host": "127.0.0.1",
-  "user": "postgres",
-  "port": 5432,
-  "pass": "postgres"
+  "host": {
+    "encrypted_data": "Ce+W5Pkqg/IREceZxU8ri+ZlYmDtiE4DgsBRCZ+6WXk=\n",
+    "iv": "gzKWtApYhqmptFur/OJJCg==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "user": {
+    "encrypted_data": "yHtt2meghUI63md3Mxrz/fELdyatvppNHR4GgT92M3o=\n",
+    "iv": "RSSGa9JAn+Nl0G0/UR38Aw==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "port": {
+    "encrypted_data": "dYhBykI2cE3Lg1idCLlYiz4FmoMNITAB+NY0WPpC/R0=\n",
+    "iv": "CtSAWdw6coMBa6ES67cplA==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "pass": {
+    "encrypted_data": "gLgzWvaDTJrmnlXag6YfiCuzz15xizz7vLv3PzCM3Qo=\n",
+    "iv": "Y34I85ZVelAK0DrqnB+smQ==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  }
 }

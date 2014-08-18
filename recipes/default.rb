@@ -21,12 +21,18 @@ if platform_family?("rhel")
   include_recipe "whats-fresh::_centos"
 end
 
+include_recipe 'build-essential'
 include_recipe 'git'
 include_recipe 'python'
-include_recipe "database::postgresql"
 
 node['whats_fresh']['package_list'].each do |pkg|
-  package pkg
+  package pkg do
+    action :nothing
+  end.run_action(:install)
+end
+
+chef_gem "pg" do
+  options "-- --with-pg-config=/usr/pgsql-9.3/bin/pg_config"
 end
 
 include_recipe 'postgis'
@@ -44,7 +50,7 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-pg = Chef::EncryptedDataBag.item('whats_fresh', 'pgsql')
+pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
 
 postgresql_connection_info = {
   :host     => pg['host'],

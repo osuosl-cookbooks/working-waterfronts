@@ -1,18 +1,17 @@
 include_recipe 'yum-ius'
 include_recipe 'yum-epel'
 
-bash "install Postgres repos" do
-  code <<-EOH
-    yum -y localinstall http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-centos93-9.3-1.noarch.rpm
-  EOH
-end
+cookbook_file "RPM-GPG-KEY-PGDG-93" do
+  path "/etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93"
+  action :nothing
+end.run_action(:create)
 
 yum_repository "pgsql" do
   description "Postgresql Repository 9.3"
   baseurl "http://yum.postgresql.org/9.3/redhat/rhel-$releasever-$basearch"
   gpgkey "file:///etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG-93"
-  action :create
-end
+  action :nothing
+end.run_action(:create)
 
 # Install gdal package
 bash "install gdal" do

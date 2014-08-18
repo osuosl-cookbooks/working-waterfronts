@@ -4,9 +4,11 @@ driver:
 
 provisioner:
   name: chef_solo
+  encrypted_data_bag_secret_key_path: test/integration/encrypted_data_bag_secret
+  data_bags_path: test/integration/data_bags
   attributes:
     postgresql:
-      version: 9.3
+      version: "9.3"
       password:
         postgres: postgres
       server:
