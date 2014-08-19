@@ -24,17 +24,8 @@ end
 include_recipe 'build-essential'
 include_recipe 'git'
 include_recipe 'python'
-
-node['whats_fresh']['package_list'].each do |pkg|
-  package pkg do
-    action :nothing
-  end.run_action(:install)
-end
-
-chef_gem "pg" do
-  options "-- --with-pg-config=/usr/pgsql-9.3/bin/pg_config"
-end
-
+include_recipe 'postgresql::client'
+include_recipe 'database::postgresql'
 include_recipe 'postgis'
 
 venv_dir = node['whats_fresh']['virtualenv_dir']
