@@ -41,26 +41,27 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
+if node['whats_fresh']['make_db']
+  pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
 
-postgresql_connection_info = {
-  :host     => pg['host'],
-  :port     => pg['port'],
-  :username => pg['user'],
-  :password => pg['pass']
-}
+  postgresql_connection_info = {
+    :host     => pg['host'],
+    :port     => pg['port'],
+    :username => pg['user'],
+    :password => pg['pass']
+  }
 
-# Create Postgres database
-database 'whats_fresh' do
-  connection postgresql_connection_info
-  provider   Chef::Provider::Database::Postgresql
-  action     :create
+  # Create Postgres database
+  database 'whats_fresh' do
+    connection postgresql_connection_info
+    provider   Chef::Provider::Database::Postgresql
+    action     :create
+  end
+
+  # Add Postgis extension to database
+  bash "create Postgis extension in whats_fresh database" do
+    code <<-EOH
+      runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
+    EOH
+  end
 end
-
-# Add Postgis extension to database
-bash "create Postgis extension in whats_fresh database" do
-  code <<-EOH
-    runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
-  EOH
-end
-

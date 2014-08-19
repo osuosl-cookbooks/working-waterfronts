@@ -49,3 +49,6 @@ suites:
     run_list:
       - recipe[postgresql::server]
       - recipe[whats-fresh::default]
+    attributes:
+      whats_fresh:
+        make_db: true
