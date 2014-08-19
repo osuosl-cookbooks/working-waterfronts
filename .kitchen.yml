@@ -21,5 +21,8 @@ platforms:
 
 suites:
   - name: default
+      - recipe[whats-fresh::default]
+  - name: develop
     run_list:
+      - recipe[postgresql::server]
       - recipe[whats-fresh::default]

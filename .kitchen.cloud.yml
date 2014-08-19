@@ -45,3 +45,7 @@ suites:
   - name: default
     run_list:
       - recipe[whats-fresh::default]
+  - name: develop
+    run_list:
+      - recipe[postgresql::server]
+      - recipe[whats-fresh::default]
