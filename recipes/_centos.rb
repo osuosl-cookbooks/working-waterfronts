@@ -3,17 +3,16 @@ include_recipe 'yum-epel'
 
 include_recipe 'postgresql::client' # needed for libpqxx-devel
 
-# Install gdal package
-bash "install gdal" do
-  code <<-EOH
-    mkdir /tmp/gdal-rpms
-    cd /tmp/gdal-rpms
-    wget #{node['whats_fresh']['manual_install_list']}
-    yum localinstall --nogpgcheck -y *.rpm
-    cd ..
-    rm -rf /tmp/gdal-rpms
-  EOH
+yum_repository "osl" do
+  repositoryid  "osl"
+  description "OSL repo $releasever - $basearch"
+  url "http://ftp.osuosl.org/pub/osl/repos/yum/$releasever/$basearch"
+  gpgkey "http://ftp.osuosl.org/pub/osl/repos/yum/RPM-GPG-osuosl"
+  action :add
 end
+
+# Install gdal package
+package "gdal"
 
 %w{python27 python27-devel}.each do |pkg|
   package pkg
