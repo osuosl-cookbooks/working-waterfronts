@@ -21,24 +21,26 @@ if platform_family?("rhel")
   include_recipe "whats-fresh::_centos"
 end
 
+include_recipe 'build-essential'
 include_recipe 'git'
 include_recipe 'python'
-include_recipe "database::postgresql"
-
-node['whats_fresh']['package_list'].each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
+include_recipe 'postgresql::client'
+include_recipe 'database::postgresql'
 include_recipe 'postgis'
 
 venv_dir = node['whats_fresh']['virtualenv_dir']
 
+directory venv_dir do
+  recursive true
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+  action :create
+end
+
 python_virtualenv venv_dir do
   interpreter 'python2.7'
-  owner "vagrant"
-  group "vagrant"
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
   action :create
 end
 
@@ -46,24 +48,27 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-postgresql_connection_info = {
-  :host     => '127.0.0.1',
-  :port     => node['postgresql']['config']['port'],
-  :username => 'postgres',
-  :password => node['postgresql']['password']['postgres']
-}
+if node['whats_fresh']['make_db']
+  pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
 
-# Create Postgres database
-database 'whats_fresh' do
-  connection postgresql_connection_info
-  provider   Chef::Provider::Database::Postgresql
-  action     :create
+  postgresql_connection_info = {
+    :host     => pg['host'],
+    :port     => pg['port'],
+    :username => pg['user'],
+    :password => pg['pass']
+  }
+
+  # Create Postgres database
+  database 'whats_fresh' do
+    connection postgresql_connection_info
+    provider   Chef::Provider::Database::Postgresql
+    action     :create
+  end
+
+  # Add Postgis extension to database
+  bash "create Postgis extension in whats_fresh database" do
+    code <<-EOH
+      runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
+    EOH
+  end
 end
-
-# Add Postgis extension to database
-bash "create Postgis extension in whats_fresh database" do
-  code <<-EOH
-    runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
-  EOH
-end
-
