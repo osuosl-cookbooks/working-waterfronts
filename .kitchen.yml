@@ -21,6 +21,7 @@ platforms:
 
 suites:
   - name: default
+    run_list:
       - recipe[whats-fresh::default]
   - name: develop
     run_list:
