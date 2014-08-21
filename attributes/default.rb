@@ -1,4 +1,6 @@
-default['whats_fresh']['virtualenv_dir'] = "/home/vagrant/venv"
+default['whats_fresh']['virtualenv_dir'] = "/opt/whats_fresh/venv"
+default['whats_fresh']['venv_owner'] = 'root'
+default['whats_fresh']['venv_group'] = 'root'
 default['postgis']['template_name'] = nil
 default['whats_fresh']['make_db'] = false
 

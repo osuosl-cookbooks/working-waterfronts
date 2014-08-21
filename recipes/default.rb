@@ -30,10 +30,17 @@ include_recipe 'postgis'
 
 venv_dir = node['whats_fresh']['virtualenv_dir']
 
+directory venv_dir do
+  recursive true
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+  action :create
+end
+
 python_virtualenv venv_dir do
   interpreter 'python2.7'
-  owner "vagrant"
-  group "vagrant"
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
   action :create
 end
 
