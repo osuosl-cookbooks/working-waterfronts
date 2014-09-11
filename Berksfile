@@ -1,6 +1,8 @@
 source "https://supermarket.getchef.com"
 
 metadata
+cookbook 'application'
+cookbook 'application_python'
 cookbook 'build-essential'
 cookbook 'database'
 cookbook 'geos'

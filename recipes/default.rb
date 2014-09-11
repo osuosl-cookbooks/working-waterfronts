@@ -28,21 +28,6 @@ include_recipe 'postgresql::client'
 include_recipe 'database::postgresql'
 include_recipe 'postgis'
 
-venv_dir = node['whats_fresh']['virtualenv_dir']
-
-directory venv_dir do
-  recursive true
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-  action :create
-end
-
-python_virtualenv venv_dir do
-  interpreter 'python2.7'
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-  action :create
-end
 
 magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
@@ -70,5 +55,20 @@ if node['whats_fresh']['make_db']
     code <<-EOH
       runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
     EOH
+  end
+end
+
+application 'whats_fresh' do
+  path       node['whats_fresh']['application_dir']
+  owner      node['whats_fresh']['venv_owner']
+  group      node['whats_fresh']['venv_group']
+  repository 'https://github.com/osu-cass/whats-fresh-api'
+  revision   node['whats_fresh']['git_branch']
+  migrate    true
+
+  django do
+    requirements      'requirements.txt'
+    debug             node['whats_fresh']['debug']
+    collectstatic     'build_static --noinput'
   end
 end
