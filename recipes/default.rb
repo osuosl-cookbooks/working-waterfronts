@@ -58,7 +58,7 @@ if node['whats_fresh']['make_db']
   end
 end
 
-include_recipe "whats_fresh::_monkey_patch"
+include_recipe "whats-fresh::_monkey_patch"
 
 application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
@@ -71,6 +71,5 @@ application 'whats_fresh' do
   django do
     requirements      'requirements.txt'
     debug             node['whats_fresh']['debug']
-    collectstatic     'build_static --noinput'
   end
 end
