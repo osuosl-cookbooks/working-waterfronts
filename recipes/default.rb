@@ -58,6 +58,8 @@ if node['whats_fresh']['make_db']
   end
 end
 
+include_recipe "whats_fresh::_monkey_patch"
+
 application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
   owner      node['whats_fresh']['venv_owner']
