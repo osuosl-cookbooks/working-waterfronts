@@ -8,6 +8,7 @@ default['whats_fresh']['debug'] = true
 default['whats_fresh']['git_branch'] = 'develop'
 
 override['postgresql']['password']['postgres'] = 'postgres'
+override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
 
 if platform_family?("rhel")
   override['postgresql']['enable_pgdg_yum'] = true

@@ -53,12 +53,20 @@ if node['whats_fresh']['make_db']
   # Add Postgis extension to database
   bash "create Postgis extension in whats_fresh database" do
     code <<-EOH
-      runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION postgis;"'
+      runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION IF NOT EXISTS postgis;"'
     EOH
   end
 end
 
 include_recipe "whats-fresh::_monkey_patch"
+
+directory "#{node['whats_fresh']['application_dir']}/shared" do
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+
+  mode '0755'
+  recursive true
+end
 
 application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
@@ -71,5 +79,17 @@ application 'whats_fresh' do
   django do
     requirements      'requirements.txt'
     debug             node['whats_fresh']['debug']
+  end
+
+  gunicorn do
+    app_module :django
+    port 8080
+    loglevel "debug"
+  end
+
+  nginx_load_balancer do
+    application_port 8080
+    hosts ['127.0.0.1']
+    static_files "/static" => "static"
   end
 end
