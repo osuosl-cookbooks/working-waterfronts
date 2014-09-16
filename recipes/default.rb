@@ -68,6 +68,22 @@ directory "#{node['whats_fresh']['application_dir']}/shared" do
   recursive true
 end
 
+directory "#{node['whats_fresh']['application_dir']}/static" do
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+
+  mode '0755'
+  recursive true
+end
+
+directory "#{node['whats_fresh']['application_dir']}/media" do
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+
+  mode '0755'
+  recursive true
+end
+
 application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
   owner      node['whats_fresh']['venv_owner']
@@ -89,7 +105,32 @@ application 'whats_fresh' do
 
   nginx_load_balancer do
     application_port 8080
-    hosts ['127.0.0.1']
-    static_files "/static" => "static"
+    hosts ['0.0.0.0']
   end
+end
+
+template "/etc/nginx/conf.d/whats_fresh.conf" do
+  source "whats_fresh.conf.erb"
+  owner "root"
+  group "root"
+end
+
+template "/opt/whats_fresh/current/whats_fresh/whats_fresh/settings.py" do
+  source "settings.py.erb"
+  force_unlink true
+  owner "root"
+  group "root"
+end
+
+file "/etc/nginx/conf.d/default.conf" do
+  action :delete
+end
+
+execute "#{::File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")} /opt/whats_fresh/current/whats_fresh/manage.py collectstatic --noi" do
+  user node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+end
+
+service "nginx" do
+  action :restart
 end

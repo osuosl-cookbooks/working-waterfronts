@@ -1,0 +1,11 @@
+server {
+  location /static/ {
+    root /opt/whats_fresh/;
+  }
+  location /media/ {
+    root /opt/whats_fresh/;
+  }
+  location / {
+    proxy_pass http://localhost:8080;
+  }
+}
