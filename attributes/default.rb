@@ -7,7 +7,7 @@ default['whats_fresh']['make_db'] = false
 default['whats_fresh']['debug'] = true
 default['whats_fresh']['git_branch'] = 'develop'
 
-override['postgresql']['password']['postgres'] = 'postgres'
+default['postgresql']['password']['postgres'] = 'postgres'
 override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
 
 if platform_family?("rhel")
