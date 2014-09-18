@@ -84,6 +84,27 @@ directory "#{node['whats_fresh']['application_dir']}/media" do
   recursive true
 end
 
+directory "#{node['whats_fresh']['application_dir']}/config" do
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
+
+  mode '0755'
+  recursive true
+end
+
+template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
+  source "config.yml.erb"
+  owner "root"
+  group "root"
+
+  variables({
+    :host     => pg['host'],
+    :port     => pg['port'],
+    :username => pg['user'],
+    :password => pg['pass']
+  })
+end
+
 application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
   owner      node['whats_fresh']['venv_owner']
@@ -105,19 +126,12 @@ application 'whats_fresh' do
 
   nginx_load_balancer do
     application_port 8080
-    hosts ['0.0.0.0']
+    hosts ['localhost']
   end
 end
 
-template "/etc/nginx/conf.d/whats_fresh.conf" do
+template "/etc/nginx/sites-available/whats_fresh.conf" do
   source "whats_fresh.conf.erb"
-  owner "root"
-  group "root"
-end
-
-template "/opt/whats_fresh/current/whats_fresh/whats_fresh/settings.py" do
-  source "settings.py.erb"
-  force_unlink true
   owner "root"
   group "root"
 end
