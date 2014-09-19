@@ -1,10 +1,10 @@
 server {
   server_name seagrant-staging.osuosl.org;
   location /static/ {
-    root /opt/whats_fresh/;
+    root <%= node['whats_fresh']['application_dir'] %>;
   }
   location /media/ {
-    root /opt/whats_fresh/;
+    root <%= node['whats_fresh']['application_dir'] %>;
   }
   location / {
     proxy_pass http://localhost:8080;

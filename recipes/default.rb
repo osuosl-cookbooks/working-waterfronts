@@ -33,9 +33,9 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-if node['whats_fresh']['make_db']
-  pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
+pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
 
+if node['whats_fresh']['make_db']
   postgresql_connection_info = {
     :host     => pg['host'],
     :port     => pg['port'],
@@ -60,42 +60,20 @@ end
 
 include_recipe "whats-fresh::_monkey_patch"
 
-directory "#{node['whats_fresh']['application_dir']}/shared" do
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
+%w[ shared static media config ].each do |path|
+  directory "#{node['whats_fresh']['application_dir']}/#{path}" do
+    owner node['whats_fresh']['venv_owner']
+    group node['whats_fresh']['venv_group']
 
-  mode '0755'
-  recursive true
-end
-
-directory "#{node['whats_fresh']['application_dir']}/static" do
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-
-  mode '0755'
-  recursive true
-end
-
-directory "#{node['whats_fresh']['application_dir']}/media" do
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-
-  mode '0755'
-  recursive true
-end
-
-directory "#{node['whats_fresh']['application_dir']}/config" do
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-
-  mode '0755'
-  recursive true
+    mode '0755'
+    recursive true
+  end
 end
 
 template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
   source "config.yml.erb"
-  owner "root"
-  group "root"
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
 
   variables({
     :host     => pg['host'],
@@ -140,7 +118,7 @@ file "/etc/nginx/conf.d/default.conf" do
   action :delete
 end
 
-execute "#{::File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")} /opt/whats_fresh/current/whats_fresh/manage.py collectstatic --noi" do
+execute "#{::File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")} #{::File.join(node['whats_fresh']['application_dir'], "current", "whats_fresh", "manage.py")} collectstatic --noi" do
   user node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
 end

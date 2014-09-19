@@ -2,10 +2,10 @@ default['whats_fresh']['application_dir'] = "/opt/whats_fresh"
 default['whats_fresh']['venv_owner'] = 'root'
 default['whats_fresh']['venv_group'] = 'root'
 default['postgis']['template_name'] = nil
-default['whats_fresh']['make_db'] = false
+default['whats_fresh']['make_db'] = true
 
 default['whats_fresh']['debug'] = true
-default['whats_fresh']['git_branch'] = 'develop'
+default['whats_fresh']['git_branch'] = 'feature/17001'
 
 default['postgresql']['password']['postgres'] = 'postgres'
 override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
