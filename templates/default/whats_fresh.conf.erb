@@ -7,6 +7,6 @@ server {
     root <%= node['whats_fresh']['application_dir'] %>;
   }
   location / {
-    proxy_pass http://localhost:8080;
+    proxy_pass http://localhost:<%= node['whats_fresh']['gunicorn_port'] %>;
   }
 }

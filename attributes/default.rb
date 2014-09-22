@@ -7,6 +7,9 @@ default['whats_fresh']['make_db'] = true
 default['whats_fresh']['debug'] = true
 default['whats_fresh']['git_branch'] = 'feature/17001'
 
+default['whats_fresh']['nginx_hosts'] = ['localhost']
+default['whats_fresh']['gunicorn_port'] = 8080
+
 default['postgresql']['password']['postgres'] = 'postgres'
 override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
 

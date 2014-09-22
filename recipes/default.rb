@@ -64,7 +64,6 @@ include_recipe "whats-fresh::_monkey_patch"
   directory "#{node['whats_fresh']['application_dir']}/#{path}" do
     owner node['whats_fresh']['venv_owner']
     group node['whats_fresh']['venv_group']
-
     mode '0755'
     recursive true
   end
@@ -74,12 +73,12 @@ template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
   source "config.yml.erb"
   owner node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
-
   variables({
     :host     => pg['host'],
     :port     => pg['port'],
     :username => pg['user'],
-    :password => pg['pass']
+    :password => pg['pass'],
+    :secret_key => pg['secret_key']
   })
 end
 
@@ -98,13 +97,13 @@ application 'whats_fresh' do
 
   gunicorn do
     app_module :django
-    port 8080
+    port node['whats_fresh']['gunicorn_port']
     loglevel "debug"
   end
 
   nginx_load_balancer do
-    application_port 8080
-    hosts ['localhost']
+    application_port node['whats_fresh']['gunicorn_port']
+    hosts node['whats_fresh']['nginx_hosts']
   end
 end
 
