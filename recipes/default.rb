@@ -72,7 +72,7 @@ include_recipe "whats-fresh::_monkey_patch"
   directory "#{node['whats_fresh']['application_dir']}/#{path}" do
     owner node['whats_fresh']['venv_owner']
     group node['whats_fresh']['venv_group']
-    mode '0755'
+    mode 0755
     recursive true
   end
 end
@@ -115,21 +115,18 @@ application 'whats_fresh' do
   end
 end
 
+file "/etc/nginx/conf.d/default.conf" do
+  action :delete
+end
+
 template "/etc/nginx/sites-available/whats_fresh.conf" do
   source "whats_fresh.conf.erb"
   owner "root"
   group "root"
-end
-
-file "/etc/nginx/conf.d/default.conf" do
-  action :delete
+  notifies :restart, "service[nginx]"
 end
 
 execute "#{::File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")} #{::File.join(node['whats_fresh']['application_dir'], "current", "whats_fresh", "manage.py")} collectstatic --noi" do
   user node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
-end
-
-service "nginx" do
-  action :restart
 end
