@@ -39,8 +39,8 @@ if node['whats_fresh']['make_db']
   postgresql_connection_info = {
     :host     => pg['host'],
     :port     => pg['port'],
-    :username => pg['user'],
-    :password => pg['pass']
+    :username => pg['root_user'],
+    :password => pg['root_pass']
   }
 
   # Create Postgres database
@@ -55,6 +55,14 @@ if node['whats_fresh']['make_db']
     code <<-EOH
       runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION IF NOT EXISTS postgis;"'
     EOH
+  end
+
+  postgresql_database_user pg['user'] do
+    connection postgresql_connection_info
+    database_name 'whats_fresh'
+    password pg['pass']
+    privileges [:all]
+    action :create
   end
 end
 

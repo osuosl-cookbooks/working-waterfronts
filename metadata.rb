@@ -7,6 +7,7 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.1.7'
 
 depends          'application'
+depends          'application_nginx'
 depends          'application_python'
 depends          'build-essential'
 depends          'database'
@@ -20,4 +21,3 @@ depends          'yum'
 depends          'yum-epel'
 depends          'yum-ius'
 depends          'yum-osuosl'
-depends          'application_nginx'

@@ -52,3 +52,4 @@ suites:
     attributes:
       whats_fresh:
         make_db: true
+        debug: true
