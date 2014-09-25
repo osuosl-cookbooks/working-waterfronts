@@ -1,5 +1,5 @@
 server {
-  server_name seagrant-staging.osuosl.org;
+  listen 80 default_server;
   location /static/ {
     root <%= node['whats_fresh']['application_dir'] %>;
   }

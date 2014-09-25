@@ -27,6 +27,7 @@ include_recipe 'python'
 include_recipe 'postgresql::client'
 include_recipe 'database::postgresql'
 include_recipe 'postgis'
+include_recipe 'osl-nginx'
 
 
 magic_shell_environment 'PATH' do
@@ -44,22 +45,22 @@ if node['whats_fresh']['make_db']
   }
 
   # Create Postgres database
-  database 'whats_fresh' do
+  database pg['database_name'] do
     connection postgresql_connection_info
     provider   Chef::Provider::Database::Postgresql
     action     :create
   end
 
   # Add Postgis extension to database
-  bash "create Postgis extension in whats_fresh database" do
+  bash "create Postgis extension in database" do
     code <<-EOH
-      runuser -l postgres -c 'psql whats_fresh -c "CREATE EXTENSION IF NOT EXISTS postgis;"'
+      runuser -l postgres -c 'psql #{pg['database_name']} -c "CREATE EXTENSION IF NOT EXISTS postgis;"'
     EOH
   end
 
   postgresql_database_user pg['user'] do
     connection postgresql_connection_info
-    database_name 'whats_fresh'
+    database_name pg['database_name']
     password pg['pass']
     privileges [:all]
     action :create
@@ -94,13 +95,13 @@ application 'whats_fresh' do
   path       node['whats_fresh']['application_dir']
   owner      node['whats_fresh']['venv_owner']
   group      node['whats_fresh']['venv_group']
-  repository 'https://github.com/osu-cass/whats-fresh-api'
+  repository node['whats_fresh']['repository']
   revision   node['whats_fresh']['git_branch']
   migrate    true
 
   django do
-    requirements      'requirements.txt'
-    debug             node['whats_fresh']['debug']
+    requirements 'requirements.txt'
+    debug node['whats_fresh']['debug']
   end
 
   gunicorn do
@@ -115,10 +116,6 @@ application 'whats_fresh' do
   end
 end
 
-file "/etc/nginx/conf.d/default.conf" do
-  action :delete
-end
-
 template "/etc/nginx/sites-available/whats_fresh.conf" do
   source "whats_fresh.conf.erb"
   owner "root"
@@ -126,7 +123,16 @@ template "/etc/nginx/sites-available/whats_fresh.conf" do
   notifies :restart, "service[nginx]"
 end
 
-execute "#{::File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")} #{::File.join(node['whats_fresh']['application_dir'], "current", "whats_fresh", "manage.py")} collectstatic --noi" do
+nginx_site "default" do
+  enable false
+end
+
+# Collect static files (css, js, etc)
+python_path = File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")
+manage_py_path = File.join(node['whats_fresh']['application_dir'], "current", "whats_fresh", "manage.py")
+
+execute "collect static files" do
+  command "#{python_path} #{manage_py_path} collectstatic --noi"
   user node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
 end
