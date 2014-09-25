@@ -87,6 +87,7 @@ template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
     :port     => pg['port'],
     :username => pg['user'],
     :password => pg['pass'],
+    :db_name => pg['database_name'],
     :secret_key => pg['secret_key']
   })
 end

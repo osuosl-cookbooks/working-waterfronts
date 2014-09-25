@@ -7,7 +7,7 @@ SECRET_KEY: "<%= @secret_key %>"
 DATABASES:
     default:
         ENGINE: "django.contrib.gis.db.backends.postgis"
-        NAME: "whats_fresh"
+        NAME: "<%= @db_name %>"
         USER: "<%= @username %>"
         PASSWORD: "<%= @password %>"
         HOST: "<%= @host %>"
