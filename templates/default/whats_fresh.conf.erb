@@ -1,5 +1,7 @@
 server {
   listen 80 default_server;
+  server_name <%= node['whats_fresh']['server_name'] %>;
+
   location /static/ {
     root <%= node['whats_fresh']['application_dir'] %>;
   }
