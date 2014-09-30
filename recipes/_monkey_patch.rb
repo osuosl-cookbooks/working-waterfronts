@@ -3,8 +3,7 @@ ruby_block "whats_fresh_monkey_patch" do
     ::Chef::Provider::ApplicationPythonDjango.class_eval do
       def action_before_compile
         include_recipe 'python'
-        new_resource.migration_command "#{::File.join(new_resource.virtualenv, "bin", "python")} whats_fresh\
-/manage.py syncdb --noinput" if !new_resource.migration_command
+        new_resource.migration_command "#{::File.join(new_resource.virtualenv, "bin", "python")} #{node['whats_fresh']['subdirectory']}manage.py syncdb --noinput" if !new_resource.migration_command
         new_resource.symlink_before_migrate.update({
 new_resource.local_settings_base => new_resource.local_settings_file,})
       end
@@ -12,7 +11,7 @@ new_resource.local_settings_base => new_resource.local_settings_file,})
         if new_resource.collectstatic
           cmd = new_resource.collectstatic.is_a?(String) ? new_resource.collectstatic : "collectstatic --noi\
 nput"
-          execute "#{::File.join(new_resource.virtualenv, "bin", "python")} whats_fresh/manage.py #{cmd}" do
+          execute "#{::File.join(new_resource.virtualenv, "bin", "python")} #{node['whats_fresh']['subdirectory']}manage.py #{cmd}" do
             user new_resource.owner
             group new_resource.group
             cwd new_resource.release_path
@@ -67,7 +66,7 @@ nput"
           django_resource = new_resource.application.sub_resources.select{|res| res.type == :django}.first
           base_command = "#{::File.join(django_resource.virtualenv, "bin", "gunicorn")} whats_fresh.wsgi:application"
           command "#{base_command} -c #{new_resource.application.path}/shared/gunicorn_config.py"
-          directory new_resource.directory.nil? ? ::File.join(new_resource.path, "current", "whats_fresh") : new_resource.directory
+          directory new_resource.directory.nil? ? ::File.join(new_resource.path, "current", node['whats_fresh']['subdirectory']) : new_resource.directory
           autostart new_resource.autostart
           user new_resource.owner
         end

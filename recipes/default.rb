@@ -130,7 +130,7 @@ end
 
 # Collect static files (css, js, etc)
 python_path = File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")
-manage_py_path = File.join(node['whats_fresh']['application_dir'], "current", "whats_fresh", "manage.py")
+manage_py_path = File.join(node['whats_fresh']['application_dir'], "current", node['whats_fresh']['subdirectory'], "manage.py")
 
 execute "collect static files" do
   command "#{python_path} #{manage_py_path} collectstatic --noi"
