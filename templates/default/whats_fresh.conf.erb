@@ -7,6 +7,7 @@ server {
     root <%= node['whats_fresh']['application_dir'] %>;
   }
   location / {
+    add_header 'Access-Control-Allow-Origin' '*';
     proxy_pass http://localhost:<%= node['whats_fresh']['gunicorn_port'] %>;
   }
 }
