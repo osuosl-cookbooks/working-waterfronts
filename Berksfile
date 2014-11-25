@@ -17,3 +17,5 @@ cookbook 'python'
 cookbook 'yum-epel'
 cookbook 'yum-ius'
 cookbook 'yum-osuosl'
+cookbook "monitoring", git: "git@github.com:osuosl-cookbooks/monitoring"
+cookbook "osl-munin", git: "git@github.com:osuosl-cookbooks/osl-munin"
