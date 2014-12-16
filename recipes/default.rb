@@ -34,7 +34,7 @@ magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-pg = Chef::EncryptedDataBagItem.load('whats_fresh', 'pgsql')
+pg = Chef::EncryptedDataBagItem.load(node['whats_fresh']['databag'], 'pgsql')
 
 if node['whats_fresh']['make_db']
   postgresql_connection_info = {

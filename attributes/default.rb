@@ -1,6 +1,7 @@
 default['whats_fresh']['application_dir'] = "/opt/whats_fresh"
 default['whats_fresh']['venv_owner'] = 'root'
 default['whats_fresh']['venv_group'] = 'root'
+default['whats_fresh']['databag'] = 'whats_fresh'
 default['postgis']['template_name'] = nil
 default['whats_fresh']['make_db'] = false
 
