@@ -110,23 +110,14 @@ application 'whats_fresh' do
     port node['whats_fresh']['gunicorn_port']
     loglevel "debug"
   end
-
-  nginx_load_balancer do
-    application_port node['whats_fresh']['gunicorn_port']
-    hosts node['whats_fresh']['nginx_hosts']
-  end
 end
 
-template "/etc/nginx/sites-available/whats_fresh.conf" do
-  source "whats_fresh.conf.erb"
-  owner "root"
-  group "root"
-  notifies :restart, "service[nginx]"
+nginx_app "whats_fresh" do
+  template "whats_fresh.conf.erb"
+  cookbook "whats-fresh"
 end
 
-nginx_site "default" do
-  enable false
-end
+node.default['nginx']['default_site_enabled'] = false
 
 # Collect static files (css, js, etc)
 python_path = File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")
