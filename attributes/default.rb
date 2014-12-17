@@ -10,7 +10,6 @@ default['whats_fresh']['git_branch'] = 'develop'
 default['whats_fresh']['repository'] = 'https://github.com/osu-cass/whats-fresh-api'
 
 default['whats_fresh']['server_name'] = node['fqdn']
-default['whats_fresh']['nginx_hosts'] = ['localhost']
 default['whats_fresh']['gunicorn_port'] = 8080
 default['whats_fresh']['subdirectory'] = '' # add trailing slash if in a subdir
 
