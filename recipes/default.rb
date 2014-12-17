@@ -17,10 +17,7 @@
 # limitations under the License.
 #
 
-if platform_family?("rhel")
-  include_recipe "whats-fresh::_centos"
-end
-
+include_recipe 'whats-fresh::_centos' if platform_family?('rhel')
 include_recipe 'build-essential'
 include_recipe 'git'
 include_recipe 'python'
@@ -29,30 +26,30 @@ include_recipe 'database::postgresql'
 include_recipe 'postgis'
 include_recipe 'osl-nginx'
 
-
 magic_shell_environment 'PATH' do
   value '/usr/pgsql-9.3/bin:$PATH'
 end
 
-pg = Chef::EncryptedDataBagItem.load('whats_fresh', node['whats_fresh']['databag'])
+pg = Chef::EncryptedDataBagItem.load('whats_fresh',
+                                     node['whats_fresh']['databag'])
 
 if node['whats_fresh']['make_db']
   postgresql_connection_info = {
-    :host     => pg['host'],
-    :port     => pg['port'],
-    :username => pg['root_user'],
-    :password => pg['root_pass']
+    host: pg['host'],
+    port: pg['port'],
+    username: pg['root_user'],
+    password: pg['root_pass']
   }
 
   # Create Postgres database
   database pg['database_name'] do
     connection postgresql_connection_info
-    provider   Chef::Provider::Database::Postgresql
-    action     :create
+    provider Chef::Provider::Database::Postgresql
+    action :create
   end
 
   # Add Postgis extension to database
-  bash "create Postgis extension in database" do
+  bash 'create Postgis extension in database' do
     code <<-EOH
       runuser -l postgres -c 'psql #{pg['database_name']} -c "CREATE EXTENSION IF NOT EXISTS postgis;"'
     EOH
@@ -67,9 +64,9 @@ if node['whats_fresh']['make_db']
   end
 end
 
-include_recipe "whats-fresh::_monkey_patch"
+include_recipe 'whats-fresh::_monkey_patch'
 
-%w[ shared static media config ].each do |path|
+%w(shared static media config).each do |path|
   directory "#{node['whats_fresh']['application_dir']}/#{path}" do
     owner node['whats_fresh']['venv_owner']
     group node['whats_fresh']['venv_group']
@@ -79,26 +76,26 @@ include_recipe "whats-fresh::_monkey_patch"
 end
 
 template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
-  source "config.yml.erb"
+  source 'config.yml.erb'
   owner node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
-  variables({
-    :host     => pg['host'],
-    :port     => pg['port'],
-    :username => pg['user'],
-    :password => pg['pass'],
-    :db_name => pg['database_name'],
-    :secret_key => pg['secret_key']
-  })
+  variables(
+    host: pg['host'],
+    port: pg['port'],
+    username: pg['user'],
+    password: pg['pass'],
+    db_name: pg['database_name'],
+    secret_key: pg['secret_key']
+  )
 end
 
 application 'whats_fresh' do
-  path       node['whats_fresh']['application_dir']
-  owner      node['whats_fresh']['venv_owner']
-  group      node['whats_fresh']['venv_group']
+  path node['whats_fresh']['application_dir']
+  owner node['whats_fresh']['venv_owner']
+  group node['whats_fresh']['venv_group']
   repository node['whats_fresh']['repository']
-  revision   node['whats_fresh']['git_branch']
-  migrate    true
+  revision node['whats_fresh']['git_branch']
+  migrate true
 
   django do
     requirements 'requirements.txt'
@@ -108,22 +105,25 @@ application 'whats_fresh' do
   gunicorn do
     app_module :django
     port node['whats_fresh']['gunicorn_port']
-    loglevel "debug"
+    loglevel 'debug'
   end
 end
 
-nginx_app "whats_fresh" do
-  template "whats_fresh.conf.erb"
-  cookbook "whats-fresh"
+nginx_app 'whats_fresh' do
+  template 'whats_fresh.conf.erb'
+  cookbook 'whats-fresh'
 end
 
 node.default['nginx']['default_site_enabled'] = false
 
 # Collect static files (css, js, etc)
-python_path = File.join(node['whats_fresh']['application_dir'], "shared", "env", "bin", "python")
-manage_py_path = File.join(node['whats_fresh']['application_dir'], "current", node['whats_fresh']['subdirectory'], "manage.py")
+python_path = File.join(node['whats_fresh']['application_dir'], 'shared',
+                        'env', 'bin', 'python')
+manage_py_path = File.join(node['whats_fresh']['application_dir'],
+                           'current', node['whats_fresh']['subdirectory'],
+                           'manage.py')
 
-execute "collect static files" do
+execute 'collect static files' do
   command "#{python_path} #{manage_py_path} collectstatic --noi"
   user node['whats_fresh']['venv_owner']
   group node['whats_fresh']['venv_group']
