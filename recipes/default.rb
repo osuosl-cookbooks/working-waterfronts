@@ -104,6 +104,7 @@ application 'whats_fresh' do
 
   gunicorn do
     app_module :django
+    autostart true
     port node['whats_fresh']['gunicorn_port']
     loglevel 'debug'
   end
