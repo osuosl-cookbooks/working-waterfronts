@@ -27,7 +27,7 @@ include_recipe 'postgis'
 include_recipe 'osl-nginx'
 
 magic_shell_environment 'PATH' do
-  value '/usr/pgsql-9.3/bin:$PATH'
+  value "/usr/pgsql-9.3/bin:$PATH"
 end
 
 pg = Chef::EncryptedDataBagItem.load('whats_fresh',
