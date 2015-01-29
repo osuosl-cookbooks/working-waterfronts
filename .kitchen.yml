@@ -18,7 +18,7 @@ provisioner:
         port: 5432
 
 platforms:
-  - name: centos-6.5
+  - name: centos-6.6
 
 suites:
   - name: default
