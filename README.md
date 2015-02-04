@@ -1,6 +1,6 @@
-What's Fresh Cookbook
+Working Waterfronts Cookbook
 =====================
-Installs the database dependencies for What's Fresh
+Installs the database dependencies for Working Waterfronts
 
 Requirements
 ------------

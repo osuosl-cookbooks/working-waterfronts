@@ -1,4 +1,4 @@
-What's Fresh Changelog
+Working Waterfronts Changelog
 ======================
 
 0.1.0
