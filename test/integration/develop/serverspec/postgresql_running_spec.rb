@@ -11,7 +11,7 @@ describe 'install and start the Postgres database' do
 end
 
 describe 'create Postgis extension to database and create table' do
-  describe command("runuser -l postgres -c 'psql whats_fresh -c \"\\dx\"'") do
+  describe command("runuser -l postgres -c 'psql working_waterfronts -c \"\\dx\"'") do
     its(:stdout) { should match /(.*?)postgis(.*)/ }
   end
 end

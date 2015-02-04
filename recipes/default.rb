@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: whats-fresh
+# Cookbook Name:: working-waterfronts
 # Recipe:: default
 #
 # Copyright 2014, Oregon State University
@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-include_recipe 'whats-fresh::_centos' if platform_family?('rhel')
+include_recipe 'working-waterfronts::_centos' if platform_family?('rhel')
 include_recipe 'build-essential'
 include_recipe 'git'
 include_recipe 'python'
@@ -26,14 +26,16 @@ include_recipe 'database::postgresql'
 include_recipe 'postgis'
 include_recipe 'osl-nginx'
 
+node.default['working_waterfronts']['server_name'] = 'test_server'
+
 magic_shell_environment 'PATH' do
   value "/usr/pgsql-9.3/bin:$PATH"
 end
 
-pg = Chef::EncryptedDataBagItem.load('whats_fresh',
-                                     node['whats_fresh']['databag'])
+pg = Chef::EncryptedDataBagItem.load('working_waterfronts',
+                                     node['working_waterfronts']['databag'])
 
-if node['whats_fresh']['make_db']
+if node['working_waterfronts']['make_db']
   postgresql_connection_info = {
     host: pg['host'],
     port: pg['port'],
@@ -64,21 +66,21 @@ if node['whats_fresh']['make_db']
   end
 end
 
-include_recipe 'whats-fresh::_monkey_patch'
+include_recipe 'working-waterfronts::_monkey_patch'
 
 %w(shared static media config).each do |path|
-  directory "#{node['whats_fresh']['application_dir']}/#{path}" do
-    owner node['whats_fresh']['venv_owner']
-    group node['whats_fresh']['venv_group']
+  directory "#{node['working_waterfronts']['application_dir']}/#{path}" do
+    owner node['working_waterfronts']['venv_owner']
+    group node['working_waterfronts']['venv_group']
     mode 0755
     recursive true
   end
 end
 
-template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
+template "#{node['working_waterfronts']['application_dir']}/config/config.yml" do
   source 'config.yml.erb'
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
+  owner node['working_waterfronts']['venv_owner']
+  group node['working_waterfronts']['venv_group']
   variables(
     host: pg['host'],
     port: pg['port'],
@@ -89,43 +91,49 @@ template "#{node['whats_fresh']['application_dir']}/config/config.yml" do
   )
 end
 
-application 'whats_fresh' do
-  path node['whats_fresh']['application_dir']
-  owner node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
-  repository node['whats_fresh']['repository']
-  revision node['whats_fresh']['git_branch']
+application 'working_waterfronts' do
+  path node['working_waterfronts']['application_dir']
+  owner node['working_waterfronts']['venv_owner']
+  group node['working_waterfronts']['venv_group']
+  repository node['working_waterfronts']['repository']
+  revision node['working_waterfronts']['git_branch']
   migrate true
 
   django do
     requirements 'requirements.txt'
-    debug node['whats_fresh']['debug']
+    debug node['working_waterfronts']['debug']
   end
 
   gunicorn do
     app_module :django
     autostart true
-    port node['whats_fresh']['gunicorn_port']
+    port node['working_waterfronts']['gunicorn_port']
     loglevel 'debug'
   end
 end
 
-nginx_app 'whats_fresh' do
-  template 'whats_fresh.conf.erb'
-  cookbook 'whats-fresh'
+nginx_app 'working_waterfronts' do
+  template 'working_waterfronts.conf.erb'
+  cookbook 'working-waterfronts'
 end
 
 node.default['nginx']['default_site_enabled'] = false
 
 # Collect static files (css, js, etc)
-python_path = File.join(node['whats_fresh']['application_dir'], 'shared',
-                        'env', 'bin', 'python')
-manage_py_path = File.join(node['whats_fresh']['application_dir'],
-                           'current', node['whats_fresh']['subdirectory'],
+python_path = File.join(node['working_waterfronts']['application_dir'],
+                        'shared', 'env', 'bin', 'python')
+manage_py_path = File.join(node['working_waterfronts']['application_dir'],
+                           'current',
+                           node['working_waterfronts']['subdirectory'],
                            'manage.py')
 
 execute 'collect static files' do
   command "#{python_path} #{manage_py_path} collectstatic --noi"
-  user node['whats_fresh']['venv_owner']
-  group node['whats_fresh']['venv_group']
+  user node['working_waterfronts']['venv_owner']
+  group node['working_waterfronts']['venv_group']
+end
+
+selinux_policy_boolean 'httpd_can_network_connect' do
+  value true
+  notifies :start, 'service[nginx]', :immediate
 end

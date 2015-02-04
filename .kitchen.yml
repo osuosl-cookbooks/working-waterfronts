@@ -23,12 +23,12 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[whats-fresh::default]
+      - recipe[working-waterfronts::default]
   - name: develop
     run_list:
       - recipe[postgresql::server]
-      - recipe[whats-fresh::default]
+      - recipe[working-waterfronts::default]
     attributes:
-      whats_fresh:
+      working_waterfronts:
         make_db: true
         debug: true

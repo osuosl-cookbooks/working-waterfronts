@@ -1,0 +1,19 @@
+server {
+  listen 80 default_server;
+  server_name <%= node['working_waterfronts']['server_name'] %>;
+
+  location /static/ {
+    root <%= node['working_waterfronts']['application_dir'] %>;
+  }
+  location /media/ {
+    root <%= node['working_waterfronts']['application_dir'] %>;
+  }
+  location /1/ {
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Headers' 'Origin, X-Requested-With, Content-Type, Accept';
+    proxy_pass http://localhost:<%= node['working_waterfronts']['gunicorn_port'] %>;
+  }
+  location / {
+    proxy_pass http://localhost:<%= node['working_waterfronts']['gunicorn_port'] %>;
+  }
+}

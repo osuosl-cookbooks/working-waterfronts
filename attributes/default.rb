@@ -1,17 +1,17 @@
-default['whats_fresh']['application_dir'] = '/opt/whats_fresh'
-default['whats_fresh']['venv_owner'] = 'root'
-default['whats_fresh']['venv_group'] = 'root'
-default['whats_fresh']['databag'] = 'pgsql'
+default['working_waterfronts']['application_dir'] = '/opt/working_waterfronts'
+default['working_waterfronts']['venv_owner'] = 'root'
+default['working_waterfronts']['venv_group'] = 'root'
+default['working_waterfronts']['databag'] = 'pgsql'
 default['postgis']['template_name'] = nil
-default['whats_fresh']['make_db'] = false
+default['working_waterfronts']['make_db'] = false
 
-default['whats_fresh']['debug'] = false
-default['whats_fresh']['git_branch'] = 'develop'
-default['whats_fresh']['repository'] = 'https://github.com/osu-cass/whats-fresh-api'
+default['working_waterfronts']['debug'] = false
+default['working_waterfronts']['git_branch'] = 'develop'
+default['working_waterfronts']['repository'] = 'https://github.com/osu-cass/working-waterfronts-api'
 
-default['whats_fresh']['server_name'] = node['fqdn']
-default['whats_fresh']['gunicorn_port'] = 8080
-default['whats_fresh']['subdirectory'] = '' # add trailing slash if in a subdir
+default['working_waterfronts']['server_name'] = node['fqdn']
+default['working_waterfronts']['gunicorn_port'] = 8000
+default['working_waterfronts']['subdirectory'] = '' # add trailing slash if in a subdir
 
 override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
 
