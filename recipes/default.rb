@@ -26,8 +26,6 @@ include_recipe 'database::postgresql'
 include_recipe 'postgis'
 include_recipe 'osl-nginx'
 
-node.default['working_waterfronts']['server_name'] = 'test_server'
-
 magic_shell_environment 'PATH' do
   value "/usr/pgsql-9.3/bin:$PATH"
 end
@@ -65,8 +63,6 @@ if node['working_waterfronts']['make_db']
     action :create
   end
 end
-
-include_recipe 'working-waterfronts::_monkey_patch'
 
 %w(shared static media config).each do |path|
   directory "#{node['working_waterfronts']['application_dir']}/#{path}" do
