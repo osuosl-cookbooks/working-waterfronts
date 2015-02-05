@@ -94,6 +94,7 @@ application 'working_waterfronts' do
   repository node['working_waterfronts']['repository']
   revision node['working_waterfronts']['git_branch']
   migrate true
+  rollback_on_error false
 
   django do
     requirements 'requirements.txt'
