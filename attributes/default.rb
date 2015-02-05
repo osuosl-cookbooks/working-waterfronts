@@ -9,7 +9,7 @@ default['working_waterfronts']['debug'] = false
 default['working_waterfronts']['git_branch'] = 'develop'
 default['working_waterfronts']['repository'] = 'https://github.com/osu-cass/working-waterfronts-api'
 
-default['working_waterfronts']['server_name'] = node['fqdn']
+default['working_waterfronts']['server_name'] = 'working-waterfronts-api.osuosl.test' # node['fqdn']
 default['working_waterfronts']['gunicorn_port'] = 8000
 default['working_waterfronts']['subdirectory'] = '' # add trailing slash if in a subdir
 
