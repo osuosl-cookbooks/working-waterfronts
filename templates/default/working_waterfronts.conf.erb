@@ -1,5 +1,7 @@
 server {
   server_name <%= node['working_waterfronts']['server_name'] %>;
+  access_log <%= node['working_waterfronts']['access_log'] %>;
+  error_log <%= node['working_waterfronts']['error_log'] %>;
 
   location /static/ {
     root <%= node['working_waterfronts']['application_dir'] %>;
