@@ -11,8 +11,8 @@ default['working_waterfronts']['repository'] = 'https://github.com/osu-cass/work
 
 default['working_waterfronts']['server_name'] = 'working-waterfronts-api.osuosl.test' # node['fqdn']
 default['working_waterfronts']['gunicorn_port'] = 8000
-default['working_waterfronts']['error_log'] = '/var/log/nginx/working_waterfronts/access.log'
-default['working_waterfronts']['access_log'] = '/var/log/nginx/working_waterfronts/error.log'
+default['working_waterfronts']['error_log'] = '/var/log/nginx/working_waterfronts/error.log'
+default['working_waterfronts']['access_log'] = '/var/log/nginx/working_waterfronts/access.log'
 default['working_waterfronts']['subdirectory'] = '' # add trailing slash if in a subdir
 
 override['python']['pip_location'] = "#{node['python']['prefix_dir']}/bin/pip2.7"
