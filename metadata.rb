@@ -2,7 +2,7 @@ name 'working-waterfronts'
 maintainer 'Oregon State University'
 maintainer_email 'systems@osuosl.org'
 license 'Apache 2.0'
-description "Installs/Configures Working Waterfronts dependencies"
+description 'Installs/Configures Working Waterfronts dependencies'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version '0.1.12'
 
@@ -14,8 +14,6 @@ depends 'database'
 depends 'geos'
 depends 'git'
 depends 'magic_shell'
-depends 'monitoring'
-depends 'osl-munin'
 depends 'osl-nginx'
 depends 'postgis'
 depends 'postgresql'
